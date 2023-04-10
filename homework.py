@@ -80,13 +80,13 @@ def get_api_answer(current_timestamp):
 def check_response(response):
     """Проверяет ответ API на корректность."""
     try:
-        isinstance(response['homeworks'], list)
-    except TypeError:
-        raise TypeError('Ошибка типов')
-    try:
         response['homeworks'] and response['current_date']
     except KeyError:
         raise KeyError('Ошибка словаря')
+    try:
+        response['homeworks']
+    except TypeError:
+        raise TypeError('Ошибка типов')
     try:
         homework = (response['homeworks'])[0]
         return homework
