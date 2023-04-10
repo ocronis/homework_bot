@@ -47,10 +47,10 @@ def send_message(bot, message):
     logger.info('Попытка отправки сообщения')
     try:
         bot.send_message(TELEGRAM_CHAT_ID, message)
+        logger.debug('Сообщение в чат отправлено')
     except Exception:
         logger.error('Ошибка отправки сообщения')
         raise Exception('Ошибка отправки сообщения')
-    logger.debug('Сообщение в чат отправлено')
 
 
 def get_api_answer(current_timestamp):
