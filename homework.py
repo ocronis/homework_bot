@@ -86,8 +86,8 @@ def check_response(response):
     try:
         homework = (response['homeworks'])[0]
         return homework
-    except IndexError:
-        raise IndexError('Список работ пуст')
+    except TypeError:
+        raise TypeError('Список работ пуст')
 
 
 def parse_status(homework):
