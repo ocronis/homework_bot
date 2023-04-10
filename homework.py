@@ -38,12 +38,12 @@ handler.setFormatter(formatter)
 
 
 def check_tokens():
-    """Проверяет доступность переменных окружения"""
+    """Проверяет доступность переменных окружения."""
     return all([PRACTICUM_TOKEN, TELEGRAM_TOKEN, TELEGRAM_CHAT_ID])
 
 
 def send_message(bot, message):
-    """Отправляет сообщение в Telegram-Чат"""
+    """Отправляет сообщение в Telegram-Чат."""
     logger.info('Попытка отправки сообщения')
     try:
         bot.send_message(TELEGRAM_CHAT_ID, message)
@@ -54,7 +54,7 @@ def send_message(bot, message):
 
 
 def get_api_answer(current_timestamp):
-    """Делает запрос к эндпоинту API-сервиса"""
+    """Делает запрос к эндпоинту API-сервиса."""
     timestamp = current_timestamp or int(time.time())
     headers_and_params = {
         'header': {'Authorization': f'OAuth {PRACTICUM_TOKEN}'},
@@ -78,7 +78,7 @@ def get_api_answer(current_timestamp):
 
 
 def check_response(response):
-    """Проверяет ответ API на корректность"""
+    """Проверяет ответ API на корректность."""
     try:
         response['homeworks'] and response['current_date']
     except KeyError:
@@ -91,7 +91,7 @@ def check_response(response):
 
 
 def parse_status(homework):
-    """Получение статуса домашней работы"""
+    """Получение статуса домашней работы."""
     if 'homework_name' not in homework:
         raise KeyError('Отсутствует ключ "homework_name" в ответе API')
     if 'status' not in homework:
