@@ -84,7 +84,7 @@ def check_response(response):
     except KeyError:
         raise KeyError('Ошибка словаря')
     try:
-        response['homeworks']
+        isinstance(response['homeworks'], list) == True
     except TypeError:
         raise TypeError('Ошибка типов')
     try:
