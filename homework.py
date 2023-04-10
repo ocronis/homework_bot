@@ -47,7 +47,7 @@ def send_message(bot, message):
     logger.info('Попытка отправки сообщения')
     try:
         bot.send_message(TELEGRAM_CHAT_ID, message)
-        logger.debug('Сообщение в чат отправлено')
+        logger.debug('Сообщение успешно отправлено')
     except Exception:
         logger.error('Ошибка отправки сообщения')
         raise Exception('Ошибка отправки сообщения')
@@ -74,7 +74,7 @@ def get_api_answer(current_timestamp):
     try:
         return homework_statuses.json()
     except ValueError:
-        raise ValueError('Ошибка перевода ответа из json в Python')
+        raise ValueError('Ошибка перевода ответа из JSON в Python')
 
 
 def check_response(response):
