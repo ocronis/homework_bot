@@ -27,7 +27,7 @@ HOMEWORK_VERDICTS = {
 }
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 handler = logging.StreamHandler(stream=sys.stdout)
 logger.addHandler(handler)
 formatter = logging.Formatter(
@@ -47,6 +47,7 @@ def send_message(bot, message):
     logger.info('Попытка отправки сообщения')
     try:
         bot.send_message(TELEGRAM_CHAT_ID, message)
+        logger.debug('Сообщение успешно отправлено')
     except Exception:
         logger.error('Ошибка отправки сообщения')
         raise Exception('Ошибка отправки сообщения')
@@ -121,14 +122,12 @@ def main():
             message = parse_status(check_response(response))
             if message != status_message:
                 send_message(bot, message)
-                logger.debug('Сообщение успешно отправлено')
                 status_message = message
         except Exception as error:
             logger.error(error)
             message = f'Сбой в работе программы: {error}'
             if message != error_message:
                 send_message(bot, message)
-                logger.debug('Сообщение успешно отправлено')
                 error_message = message
         finally:
             time.sleep(RETRY_PERIOD)
