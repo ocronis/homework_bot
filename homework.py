@@ -47,7 +47,6 @@ def send_message(bot, message):
     logger.info('Попытка отправки сообщения')
     try:
         bot.send_message(TELEGRAM_CHAT_ID, message)
-        logger.debug('Сообщение успешно отправлено')
     except Exception:
         logger.error('Ошибка отправки сообщения')
         raise Exception('Ошибка отправки сообщения')
@@ -122,6 +121,7 @@ def main():
             message = parse_status(check_response(response))
             if message != status_message:
                 send_message(bot, message)
+                logger.debug('Сообщение успешно отправлено')
                 status_message = message
         except Exception as error:
             logger.error(error)
