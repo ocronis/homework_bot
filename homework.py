@@ -128,6 +128,7 @@ def main():
             message = f'Сбой в работе программы: {error}'
             if message != error_message:
                 send_message(bot, message)
+                logger.debug('Сообщение успешно отправлено')
                 error_message = message
         finally:
             time.sleep(RETRY_PERIOD)
