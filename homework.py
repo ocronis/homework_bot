@@ -93,7 +93,8 @@ def check_response(response):
     """Проверяет ответ API на корректность."""
     if not ("homeworks" in response and "current_date" in response):
         raise KeyError('Ошибка словаря')
-    if not isinstance(response, dict):
+    if (not isinstance(response['homeworks'], list)
+        and type(response) == "<class 'dict'>"):
         raise TypeError('Ошибка типов')
     try:
         homework = (response['homeworks'])[0]
