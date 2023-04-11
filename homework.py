@@ -29,6 +29,7 @@ HOMEWORK_VERDICTS = {
 
 class StatusError(Exception):
     """Исключение для обработки ошибки получение HTML статуса."""
+    
     def __init__(self, text):
         """Определение данных для вывода при исключении."""
         self.txt = text
