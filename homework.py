@@ -26,15 +26,23 @@ HOMEWORK_VERDICTS = {
     'rejected': 'Работа проверена: у ревьюера есть замечания.'
 }
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-handler = logging.StreamHandler(stream=sys.stdout)
-logger.addHandler(handler)
-formatter = logging.Formatter(
-    '%(asctime)s,'
-    + '%(levelname)s, %(message)s, %(name)s, %(funcName)s, %(lineno)s'
-)
-handler.setFormatter(formatter)
+
+class StatusError(Exception):
+    def __init__(self, text):
+        self.txt = text
+
+def log_func():
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.DEBUG)
+    handler = logging.StreamHandler(stream=sys.stdout)
+    logger.addHandler(handler)
+    formatter = logging.Formatter(
+        '%(asctime)s,'
+        + '%(levelname)s, %(message)s, %(name)s, %(funcName)s, %(lineno)s'
+    )
+    handler.setFormatter(formatter)
+
+    return logger
 
 
 def check_tokens():
@@ -44,13 +52,12 @@ def check_tokens():
 
 def send_message(bot, message):
     """Отправляет сообщение в Telegram-Чат."""
-    logger.info('Попытка отправки сообщения')
+    log_func().info('Попытка отправки сообщения')
     try:
         bot.send_message(TELEGRAM_CHAT_ID, message)
-        logger.debug('Сообщение успешно отправлено')
-    except Exception:
-        logger.error('Ошибка отправки сообщения')
-        raise Exception('Ошибка отправки сообщения')
+        log_func().debug('Сообщение успешно отправлено')
+    except telegram.error.TelegramError:
+        log_func().error('Ошибка отправки сообщения')
 
 
 def get_api_answer(current_timestamp):
@@ -70,7 +77,7 @@ def get_api_answer(current_timestamp):
         raise Exception(f'Ошибка при запросе к API: {error}')
     if homework_statuses.status_code != HTTPStatus.OK:
         status_code = homework_statuses.status_code
-        raise Exception(f'Ошибка {status_code}')
+        raise StatusError(f'Ошибка {status_code}')
     try:
         return homework_statuses.json()
     except ValueError:
@@ -79,9 +86,7 @@ def get_api_answer(current_timestamp):
 
 def check_response(response):
     """Проверяет ответ API на корректность."""
-    try:
-        response['homeworks'] and response['current_date']
-    except KeyError:
+    if not response['homeworks'] and response['current_date']:
         raise KeyError('Ошибка словаря')
     if not isinstance(response['homeworks'], list):
         raise TypeError('Ошибка типов')
@@ -97,7 +102,7 @@ def parse_status(homework):
     if 'homework_name' not in homework:
         raise KeyError('Отсутствует ключ "homework_name" в ответе API')
     if 'status' not in homework:
-        raise Exception('Отсутствует ключ "status" в ответе API')
+        raise KeyError('Отсутствует ключ "status" в ответе API')
     homework_name = homework['homework_name']
     homework_status = homework['status']
     if homework_status not in HOMEWORK_VERDICTS:
@@ -112,7 +117,7 @@ def main():
     status_message = ''
     error_message = ''
     if not check_tokens():
-        logger.critical('Отсутствуют токены')
+        log_func().critical('Отсутствуют токены')
         sys.exit(1)
     while True:
         try:
@@ -124,7 +129,7 @@ def main():
                 send_message(bot, message)
                 status_message = message
         except Exception as error:
-            logger.error(error)
+            log_func().error(error)
             message = f'Сбой в работе программы: {error}'
             if message != error_message:
                 send_message(bot, message)
