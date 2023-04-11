@@ -28,10 +28,14 @@ HOMEWORK_VERDICTS = {
 
 
 class StatusError(Exception):
+    """Исключение для обработки ошибки получение HTML статуса."""
     def __init__(self, text):
+        """Определение данных для вывода при исключении."""
         self.txt = text
 
+
 def log_func():
+    """Функция логирования работы бота."""
     logger = logging.getLogger(__name__)
     logger.setLevel(logging.DEBUG)
     handler = logging.StreamHandler(stream=sys.stdout)
