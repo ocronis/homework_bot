@@ -57,7 +57,6 @@ def check_tokens():
 
 def send_message(bot, message):
     """Отправляет сообщение в Telegram-Чат."""
-    log_func().info('Попытка отправки сообщения')
     try:
         bot.send_message(TELEGRAM_CHAT_ID, message)
         log_func().debug('Сообщение успешно отправлено')
@@ -112,7 +111,7 @@ def parse_status(homework):
         raise KeyError('Отсутствует ключ "status" в ответе API')
     homework_name = homework['homework_name']
     homework_status = homework['status']
-    if homework_status not in HOMEWORK_VERDICTS:
+    if not homework_status in HOMEWORK_VERDICTS:
         raise Exception(f'Неизвестный статус работы: {homework_status}')
     verdict = HOMEWORK_VERDICTS[homework_status]
     return f'Изменился статус проверки работы "{homework_name}". {verdict}'
@@ -128,6 +127,7 @@ def main():
         sys.exit(1)
     while True:
         try:
+            log_func().info('Попытка отправки сообщения')
             bot = telegram.Bot(token=TELEGRAM_TOKEN)
             response = get_api_answer(current_timestamp)
             current_timestamp = response.get('current_date')
