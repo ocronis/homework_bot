@@ -35,7 +35,7 @@ class StatusError(Exception):
         self.txt = text
 
 
-def log_func():
+def get_logger():
     """Функция логирования работы бота."""
     logger = logging.getLogger(__name__)
     logger.setLevel(logging.DEBUG)
@@ -50,6 +50,9 @@ def log_func():
     return logger
 
 
+logger  = get_logger()
+
+
 def check_tokens():
     """Проверяет доступность переменных окружения."""
     return all([PRACTICUM_TOKEN, TELEGRAM_TOKEN, TELEGRAM_CHAT_ID])
@@ -59,9 +62,9 @@ def send_message(bot, message):
     """Отправляет сообщение в Telegram-Чат."""
     try:
         bot.send_message(TELEGRAM_CHAT_ID, message)
-        log_func().debug('Сообщение успешно отправлено')
+        logger.debug('Сообщение успешно отправлено')
     except telegram.error.TelegramError:
-        log_func().error('Ошибка отправки сообщения')
+        logger.error('Ошибка отправки сообщения')
 
 
 def get_api_answer(current_timestamp):
@@ -123,11 +126,11 @@ def main():
     status_message = ''
     error_message = ''
     if not check_tokens():
-        log_func().critical('Отсутствуют токены')
+        logger.critical('Отсутствуют токены')
         sys.exit(1)
     while True:
         try:
-            log_func().info('Попытка отправки сообщения')
+            logger.info('Попытка отправки сообщения')
             bot = telegram.Bot(token=TELEGRAM_TOKEN)
             response = get_api_answer(current_timestamp)
             current_timestamp = response.get('current_date')
@@ -136,7 +139,7 @@ def main():
                 send_message(bot, message)
                 status_message = message
         except Exception as error:
-            log_func().error(error)
+            logger.error(error)
             message = f'Сбой в работе программы: {error}'
             if message != error_message:
                 send_message(bot, message)
