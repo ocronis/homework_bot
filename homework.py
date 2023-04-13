@@ -50,7 +50,7 @@ def get_logger():
     return logger
 
 
-logger  = get_logger()
+logger = get_logger()
 
 
 def check_tokens():
